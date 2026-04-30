@@ -11,31 +11,26 @@ export async function POST(req: NextRequest) {
     const KIT_FORM_ID = process.env.KIT_FORM_ID;
 
     if (!KIT_FORM_ID) {
-      // Dev mode — just log and return success
       console.log(`[DEV] Waitlist signup: ${email} (source: ${source})`);
       return NextResponse.json({ success: true });
     }
 
-    // Post to Kit (ConvertKit) form subscription endpoint
+    // Correct endpoint — still uses convertkit.com domain
     const kitRes = await fetch(
-      `https://app.kit.com/forms/${KIT_FORM_ID}/subscriptions`,
+      `https://app.convertkit.com/forms/${KIT_FORM_ID}/subscriptions`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email_address: email,
-          fields: { source: source ?? "landing-page" },
-        }),
+        body: JSON.stringify({ email_address: email }),
       }
     );
+
+    console.log("Kit response status:", kitRes.status);
 
     if (!kitRes.ok) {
       const errorText = await kitRes.text();
       console.error("Kit API error:", errorText);
-      return NextResponse.json(
-        { error: "Failed to subscribe" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
