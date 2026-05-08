@@ -1,4 +1,4 @@
-# Wird — وِرد · Landing Page
+# Wird — وِرد · Landing Page.
 
 Next.js 15 · TypeScript · Tailwind CSS v4
 
